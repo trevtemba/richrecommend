@@ -4,9 +4,10 @@ package models
 type RecommendationRequest struct {
 	SystemPrompt               string                 `json:"system_prompt"`
 	UserPrompt                 string                 `json:"user_prompt"`
-	Categories                 []string               `json:"categories"`
+	RecommendationsCategories  []string               `json:"recommendations_categories"`
 	RecommendationsPerCategory int                    `json:"recommendations_per_category"`
-	RecommendationSchema       map[string]interface{} `json:"recommendation_schema"`
+	ResponseSchema             map[string]interface{} `json:"response_schema"`
+	ClientContext              map[string]interface{} `json:"client_context"`
 }
 
 // type HairProfile struct {
