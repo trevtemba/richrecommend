@@ -1,5 +1,5 @@
 package models
 
-type RecommendationResponse struct {
+type Response struct {
 	Recommendaton map[string][]string `json:"recommendation"`
 }
