@@ -7,7 +7,16 @@ import (
 
 func RunPipelineWithParams(params models.OrchestratorParams) (any, error) {
 	// Step 1: Recommendation Agent
-	recommendedProducts, err := recommendation.GenerateWithParams(params)
+
+	var recommendationParams models.RecommendationParams
+
+	recommendationParams.SystemPrompt = params.SystemPrompt
+	recommendationParams.UserPrompt = params.UserPrompt
+	recommendationParams.Categories = params.Categories
+	recommendationParams.RecommendationsPerCategory = params.RecommendationsPerCategory
+	recommendationParams.Context = params.Context
+
+	recommendedProducts, err := recommendation.GenerateWithParams(recommendationParams)
 	if err != nil {
 		return nil, err
 	}
