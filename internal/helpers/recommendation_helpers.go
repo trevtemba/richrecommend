@@ -36,6 +36,7 @@ func ParseChatResponse(content string, categories []string) (map[string][]string
 	}
 
 	for _, cat := range categories {
+		recommendedItems[cat] = nil
 		if key, ok := data[cat]; ok {
 			if itemArr, ok := key.([]any); ok {
 				for _, item := range itemArr {
