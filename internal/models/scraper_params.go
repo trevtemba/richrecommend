@@ -1,6 +1,6 @@
 package models
 
-type RecommendationParams struct {
+type ScraperParams struct {
 	Provider                   string        `json:"provider"`
 	Model                      string        `json:"model"`
 	SystemPrompt               SystemPrompt  `json:"system_prompt"`
