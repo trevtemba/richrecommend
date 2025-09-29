@@ -41,8 +41,20 @@ func StartAdvanced(c *gin.Context) {
 		return
 	}
 
+	val, exists := c.Get("request_id")
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error reading request ID"})
+		return
+	}
+
+	requestId, ok := val.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "request ID is not a string"})
+		return
+	}
+
 	params := models.OrchestratorParams(req)
-	results, err := orchestrator.RunAdvPipelineWithParams(params, key)
+	results, err := orchestrator.RunAdvPipelineWithParams(params, key, requestId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
