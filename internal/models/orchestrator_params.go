@@ -6,7 +6,7 @@ type OrchestratorParams struct {
 	SystemPrompt               SystemPrompt  `json:"system_prompt"`
 	UserPrompt                 string        `json:"user_prompt"`
 	Categories                 []string      `json:"categories"`
-	RecommendationsPerCategory int           `json:"recommendatins_per_category"`
+	RecommendationsPerCategory int           `json:"recommendations_per_category"`
 	ContextSchema              ContextSchema `json:"context_schema"`
 	Include                    []string      `json:"include"`
 }

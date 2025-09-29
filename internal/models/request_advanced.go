@@ -1,6 +1,5 @@
 package models
 
-// Request payload for dynamic recommendations
 type RequestAdvanced struct {
 	Provider                   string        `json:"provider"`
 	Model                      string        `json:"model"`
@@ -11,10 +10,3 @@ type RequestAdvanced struct {
 	ContextSchema              ContextSchema `json:"context_schema"`
 	Include                    []string      `json:"include"`
 }
-
-// type HairProfile struct {
-// 	CurlType       string `json:"curl_type"`
-// 	Porosity       string `json:"porosity"`
-// 	Volume         string `json:"volume"`
-// 	DesiredOutcome string `json:"desired_outcome"`
-// }

@@ -18,13 +18,13 @@ func SetupRoutes(router *gin.Engine) {
 	// 	userGroup.GET("/:id/fetch", handlers.FetchUserData)
 	// }
 
-	recommendationBaseGroup := router.Group("/recommendation/base")
-	{
-		recommendationBaseGroup.POST("/:id", handlers.StartBase)
-	}
+	// recommendationBaseGroup := router.Group("/recommendation/base")
+	// {
+	// 	recommendationBaseGroup.POST("/:id", handlers.StartBase)
+	// }
 
 	recommendationAdvGroup := router.Group("/recommendation/advanced")
 	{
-		recommendationAdvGroup.POST("/:id", handlers.StartBase)
+		recommendationAdvGroup.POST("/:id", handlers.StartAdvanced)
 	}
 }

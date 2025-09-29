@@ -1,8 +1,9 @@
-package helpers
+package recommendationhelpers
 
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/trevtemba/richrecommend/internal/models"
@@ -34,7 +35,7 @@ func GenerateSystemMessage(systemPrompt models.SystemPrompt, contextSchemaName s
 
 	var message strings.Builder
 
-	message.WriteString(fmt.Sprintf("You are a %s for %s ", systemPrompt.Role, systemPrompt.Clientele))
+	message.WriteString(fmt.Sprintf("You are a %s for %s. ", systemPrompt.Role, systemPrompt.Clientele))
 
 	if systemPrompt.Domain != "" {
 		message.WriteString(fmt.Sprintf("in %s ", systemPrompt.Domain))
@@ -51,19 +52,28 @@ func GenerateSystemMessage(systemPrompt models.SystemPrompt, contextSchemaName s
 func GenerateUserMessage(contextSchema models.ContextSchema) (string, error) {
 
 	var message strings.Builder
-	var ctxSchemaStr strings.Builder
+	var ctxSchemaStrB strings.Builder
 
-	for field, val := range contextSchema.Content {
+	keys := make([]string, 0, len(contextSchema.Content))
+	for key := range contextSchema.Content {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		val := contextSchema.Content[key]
 		strVal, ok := val.(string)
 		if !ok {
 			return "", fmt.Errorf("could not turn context value into a string")
 		}
-		ctxSchemaStr.WriteString(fmt.Sprintf("\n%s: %s", field, strVal))
+		ctxSchemaStrB.WriteString(fmt.Sprintf("\n%s: %s,", key, strVal))
 	}
+	ctxSchemaStr := ctxSchemaStrB.String()
+	ctxSchemaStr = strings.TrimSuffix(ctxSchemaStr, ",")
 
-	message.WriteString(fmt.Sprintf("%s:%s", contextSchema.Name, ctxSchemaStr.String()))
+	message.WriteString(fmt.Sprintf("%s: {%s\n}", contextSchema.Name, ctxSchemaStr))
 
-	message.WriteString("\n\nRecommend products.")
+	message.WriteString("\nRecommend products.")
 
 	return message.String(), nil
 }
