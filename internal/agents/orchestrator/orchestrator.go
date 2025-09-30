@@ -2,6 +2,7 @@ package orchestrator
 
 import (
 	"github.com/trevtemba/richrecommend/internal/agents/recommendation"
+	"github.com/trevtemba/richrecommend/internal/agents/scraper"
 	"github.com/trevtemba/richrecommend/internal/logger"
 	"github.com/trevtemba/richrecommend/internal/models"
 )
@@ -27,12 +28,14 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 
 	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Recommendation agent finished", "request_id", requestId)
 
-	// // Step 2: Scraper Agents
-	// loadedProducts, err := scraper.ScrapeProducts(recommendedProducts.Recommendation, requestId)
-	// if err != nil {
-	// 	logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Scraper agent aborted", "request_id", requestId)
-	// 	return nil, err
-	// }
+	// Step 2: Scraper Agents
+	loadedProducts, err := scraper.ScrapeProducts(recommendedProducts, requestId)
+	if err != nil {
+		logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Scraper agent aborted", "request_id", requestId)
+		return nil, err
+	}
+
+	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent finished", "request_id", requestId)
 
 	// // Step 3: Normalizer Agent
 	// normalized := normalizer.NormalizeProducts(rawProducts)
@@ -51,7 +54,7 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 	// 	})
 	// }s
 
-	return recommendedProducts, nil
+	return loadedProducts, nil
 }
 
 // func RunBasePipelineWithParams(params models.OrchestratorParams, requestId string) (any, error) {
