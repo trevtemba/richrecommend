@@ -10,8 +10,9 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId string) (map[string]any, error) {
+func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId string) (models.ScraperResponse, error) {
 	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent started", "request_id", requestId)
+	var scraperResponse models.ScraperResponse
 
 	params := map[string]string{
 		"q":             "",
@@ -22,11 +23,12 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 	}
 
 	eg := new(errgroup.Group)
-	c := make(chan map[string]any, recommendedProducts.ItemCount)
+	ch := make(chan map[string]any, recommendedProducts.ItemCount)
 
 	for _, productList := range recommendedProducts.Recommendation {
 		for _, productName := range productList {
 			eg.Go(func() error {
+				resultMap := make(map[string]any)
 				logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, fmt.Sprintf("Scraping data for %s...", productName), "request_id", requestId)
 				params["q"] = productName
 
@@ -36,7 +38,8 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 					return fmt.Errorf("serpAPI search for %s failed: %w", productName, err)
 				}
 
-				c <- results
+				resultMap[productName] = results
+				ch <- resultMap
 
 				return nil
 			})
@@ -44,9 +47,13 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 	}
 
 	if err := eg.Wait(); err != nil {
-		return nil, fmt.Errorf("%w", err)
+		return scraperResponse, fmt.Errorf("%w", err)
+	}
+	close(ch)
+
+	for productData := range ch {
+		scraperResponse.ProductsScraped = append(scraperResponse.ProductsScraped, productData)
 	}
 
-	loadedData := <-c
-	return loadedData, nil
+	return scraperResponse, nil
 }
