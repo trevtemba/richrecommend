@@ -78,14 +78,17 @@ func GenerateUserMessage(contextSchema models.ContextSchema) (string, error) {
 	return message.String(), nil
 }
 
-func ParseChatResponse(content string, categories []string) (map[string][]string, error) {
+func ParseChatResponse(content string, categories []string) (models.RecommendationResponse, error) {
 	var data map[string]any
+
+	var recommendationResponse models.RecommendationResponse
 	var recommendedItems = make(map[string][]string)
+	var itemCount int
 
 	err := json.Unmarshal([]byte(content), &data)
 
 	if err != nil {
-		return recommendedItems, fmt.Errorf("could not parse chat response: %w", err)
+		return recommendationResponse, fmt.Errorf("could not parse chat response: %w", err)
 	}
 
 	for _, cat := range categories {
@@ -95,10 +98,15 @@ func ParseChatResponse(content string, categories []string) (map[string][]string
 				for _, item := range itemArr {
 					if itemName, ok := item.(string); ok {
 						recommendedItems[cat] = append(recommendedItems[cat], itemName)
+						itemCount++
 					}
 				}
 			}
 		}
 	}
-	return recommendedItems, nil
+
+	recommendationResponse.Recommendation = recommendedItems
+	recommendationResponse.ItemCount = itemCount
+
+	return recommendationResponse, nil
 }

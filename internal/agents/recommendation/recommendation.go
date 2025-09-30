@@ -64,7 +64,6 @@ func GenerateWithAdvParams(params models.RecommendationParams, key string, reque
 
 	logger.Log(logger.LogTypeAgentStart, logger.LevelInfo, "Recommendation agent started", "request_id", requestId)
 	var recommendation models.RecommendationResponse
-	var recommendationMap map[string][]string
 	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Generating product recommendation schema...", "request_id", requestId)
 	var ProductRecommendationResponseSchema map[string]any = recHelpers.GenerateSchema(params.Categories)
 
@@ -114,12 +113,10 @@ func GenerateWithAdvParams(params models.RecommendationParams, key string, reque
 	}
 
 	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Parsing LLM response...", "request_id", requestId)
-	recommendationMap, err = recHelpers.ParseChatResponse(chat.Choices[0].Message.Content, params.Categories)
+	recommendation, err = recHelpers.ParseChatResponse(chat.Choices[0].Message.Content, params.Categories)
 	if err != nil {
 		return recommendation, fmt.Errorf("could not parse chat response: %w", err)
 	}
-
-	recommendation.Recommendation = recommendationMap
 
 	return recommendation, nil
 }
