@@ -68,18 +68,21 @@ func TestParseChatResponse(t *testing.T) {
 	tests := []struct {
 		name    string
 		params  testParams
-		want    map[string][]string
+		want    models.RecommendationResponse
 		wantErr bool
 	}{
 		{
 			name: "valid JSON",
 			params: testParams{
 				content:    `{"conditioners": ["A", "B"], "shampoos": ["C"]}`,
-				categories: []string{"conditioners, shampoos"},
+				categories: categories,
 			},
-			want: map[string][]string{
-				"conditioners": {"A", "B"},
-				"shampoos":     {"C"},
+			want: models.RecommendationResponse{
+				Recommendation: map[string][]string{
+					"conditioners": {"A", "B"},
+					"shampoos":     {"C"},
+				},
+				ItemCount: 3,
 			},
 			wantErr: false,
 		},
@@ -87,11 +90,14 @@ func TestParseChatResponse(t *testing.T) {
 			name: "missing category",
 			params: testParams{
 				content:    `{"conditioners": ["A", "B"]}`,
-				categories: []string{"conditioners, shampoos"},
+				categories: categories,
 			},
-			want: map[string][]string{
-				"conditioners": {"A", "B"},
-				"shampoos":     nil,
+			want: models.RecommendationResponse{
+				Recommendation: map[string][]string{
+					"conditioners": {"A", "B"},
+					"shampoos":     nil,
+				},
+				ItemCount: 2,
 			},
 			wantErr: false,
 		},
@@ -99,20 +105,23 @@ func TestParseChatResponse(t *testing.T) {
 			name: "malformed JSON",
 			params: testParams{
 				content:    `{"conditioners": [}`,
-				categories: []string{"conditioners, shampoos"},
+				categories: categories,
 			},
-			want:    map[string][]string{},
+			want:    models.RecommendationResponse{},
 			wantErr: true,
 		},
 		{
 			name: "wrong type values",
 			params: testParams{
 				content:    `{"conditioners": [1, 2], "shampoos": [3]}`,
-				categories: []string{"conditioners, shampoos"},
+				categories: categories,
 			},
-			want: map[string][]string{
-				"conditioners": nil,
-				"shampoos":     nil,
+			want: models.RecommendationResponse{
+				Recommendation: map[string][]string{
+					"conditioners": nil,
+					"shampoos":     nil,
+				},
+				ItemCount: 0,
 			},
 			wantErr: false,
 		},
@@ -120,16 +129,18 @@ func TestParseChatResponse(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParseChatResponse(tt.params.content, categories)
+			got, err := ParseChatResponse(tt.params.content, tt.params.categories)
 			if (err != nil) != tt.wantErr {
-				t.Fatalf("ParseChatResponse error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ParseChatResponse() error = %v, wantErr %v", err, tt.wantErr)
+				return
 			}
-			if diff := cmp.Diff(tt.want, got); diff != "" {
-				t.Errorf("ParseChatResponse mismatch (-want +got):\n%s", diff)
+			if diff := cmp.Diff(got, tt.want); diff != "" {
+				t.Errorf("ParseChatResponse() got = %+v, want %+v", got, tt.want)
 			}
 		})
 	}
 }
+
 func TestGenerateSystemMessage(t *testing.T) {
 	type testParams struct {
 		systemPrompt      models.SystemPrompt

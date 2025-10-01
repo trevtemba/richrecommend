@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/trevtemba/richrecommend/internal/api/handlers"
+	"github.com/trevtemba/richrecommend/internal/api/middleware"
 )
 
 func SetupRoutes(router *gin.Engine) {
@@ -24,6 +25,7 @@ func SetupRoutes(router *gin.Engine) {
 	// }
 
 	recommendationAdvGroup := router.Group("/recommendation/advanced")
+	recommendationAdvGroup.Use(middleware.RequestID())
 	{
 		recommendationAdvGroup.POST("/:id", handlers.StartAdvanced)
 	}

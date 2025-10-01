@@ -7,10 +7,11 @@ import (
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
 	recHelpers "github.com/trevtemba/richrecommend/internal/helpers/recommendation"
+	"github.com/trevtemba/richrecommend/internal/logger"
 	"github.com/trevtemba/richrecommend/internal/models"
 )
 
-// func GenerateWithBaseParams(params models.RecommendationParams) (models.RecommendationResponse, error) {
+// func GenerateWithBaseParams(params models.RecommendationParams, requestId string) (models.RecommendationResponse, error) {
 
 // 	var recommendation models.RecommendationResponse
 // 	var recommendationMap map[string][]string
@@ -59,10 +60,11 @@ import (
 // 	return recommendation, nil
 // }
 
-func GenerateWithAdvParams(params models.RecommendationParams, key string) (models.RecommendationResponse, error) {
+func GenerateWithAdvParams(params models.RecommendationParams, key string, requestId string) (models.RecommendationResponse, error) {
 
+	logger.Log(logger.LogTypeAgentStart, logger.LevelInfo, "Recommendation agent started", "request_id", requestId)
 	var recommendation models.RecommendationResponse
-	var recommendationMap map[string][]string
+	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Generating product recommendation schema...", "request_id", requestId)
 	var ProductRecommendationResponseSchema map[string]any = recHelpers.GenerateSchema(params.Categories)
 
 	apiKey := key
@@ -82,15 +84,19 @@ func GenerateWithAdvParams(params models.RecommendationParams, key string) (mode
 		Strict:      openai.Bool(true),
 	}
 
+	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Generating system message...", "request_id", requestId)
 	sysMsg, err := recHelpers.GenerateSystemMessage(params.SystemPrompt, params.ContextSchema.Name, params.Categories, params.RecommendationsPerCategory)
 	if err != nil {
 		return recommendation, fmt.Errorf("could not generate system prompt: %w", err)
 	}
+
+	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Generating user message...", "request_id", requestId)
 	usrMsg, err := recHelpers.GenerateUserMessage(params.ContextSchema)
 	if err != nil {
 		return recommendation, fmt.Errorf("could not generate user prompt: %w", err)
 	}
 
+	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Chatting with LLM...", "request_id", requestId)
 	chat, err := client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
 		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(sysMsg),
@@ -106,13 +112,11 @@ func GenerateWithAdvParams(params models.RecommendationParams, key string) (mode
 		return recommendation, fmt.Errorf("could not initiate chat with ai: %w", err)
 	}
 
-	recommendationMap, err = recHelpers.ParseChatResponse(chat.Choices[0].Message.Content, params.Categories)
-
+	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Parsing LLM response...", "request_id", requestId)
+	recommendation, err = recHelpers.ParseChatResponse(chat.Choices[0].Message.Content, params.Categories)
 	if err != nil {
 		return recommendation, fmt.Errorf("could not parse chat response: %w", err)
 	}
-
-	recommendation.Recommendation = recommendationMap
 
 	return recommendation, nil
 }
