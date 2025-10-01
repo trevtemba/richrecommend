@@ -1,8 +1,11 @@
 package scraper
 
 import (
+	"context"
 	"fmt"
+	"maps"
 	"os"
+	"time"
 
 	g "github.com/serpapi/google-search-results-golang"
 	"github.com/trevtemba/richrecommend/internal/logger"
@@ -14,6 +17,12 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent started", "request_id", requestId)
 	var scraperResponse models.ScraperResponse
 
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+
+	eg, ctx := errgroup.WithContext(ctx)
+	ch := make(chan map[string]any, recommendedProducts.ItemCount)
+
 	params := map[string]string{
 		"q":             "",
 		"location":      "Austin, Texas, United States",
@@ -22,26 +31,42 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 		"google_domain": "google.com",
 	}
 
-	eg := new(errgroup.Group)
-	ch := make(chan map[string]any, recommendedProducts.ItemCount)
-
 	for _, productList := range recommendedProducts.Recommendation {
 		for _, productName := range productList {
+			pn := productName
 			eg.Go(func() error {
-				resultMap := make(map[string]any)
-				logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, fmt.Sprintf("Scraping data for %s...", productName), "request_id", requestId)
-				params["q"] = productName
+				logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, fmt.Sprintf("Scraping data for %s...", pn), "request_id", requestId)
 
-				search := g.NewGoogleSearch(params, os.Getenv("SERP_API_KEY"))
-				results, err := search.GetJSON()
-				if err != nil {
-					return fmt.Errorf("serpAPI search for %s failed: %w", productName, err)
+				localParams := maps.Clone(params)
+				localParams["q"] = pn
+
+				reqCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+				defer cancel()
+
+				errCh := make(chan error, 1)
+				resCh := make(chan map[string]any, 1)
+
+				go func() {
+
+					search := g.NewGoogleSearch(localParams, os.Getenv("SERP_API_KEY"))
+					results, err := search.GetJSON()
+
+					if err != nil {
+						errCh <- fmt.Errorf("serpAPI search for %s failed: %w", pn, err)
+					} else {
+						resCh <- map[string]any{pn: results}
+					}
+				}()
+
+				select {
+				case <-reqCtx.Done():
+					return fmt.Errorf("scraper agent for %s has timed out", pn)
+				case err := <-errCh:
+					return fmt.Errorf("%w", err)
+				case res := <-resCh:
+					ch <- res
+					return nil
 				}
-
-				resultMap[productName] = results
-				ch <- resultMap
-
-				return nil
 			})
 		}
 	}
