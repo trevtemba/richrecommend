@@ -20,6 +20,7 @@ const (
 	LogTypeAgentStart  LogType = "agent_start"
 	LogTypeAgentWork   LogType = "agent_work"
 	LogTypeAgentFinish LogType = "agent_finish"
+	LogTypeAgentDebug  LogType = "agent_debug"
 	LogTypeAgentAbort  LogType = "agent_abort"
 	LogTypeRequest     LogType = "request"
 	LogTypeSystem      LogType = "system"

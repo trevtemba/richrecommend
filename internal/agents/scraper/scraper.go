@@ -22,6 +22,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 
 	eg, ctx := errgroup.WithContext(ctx)
 	ch := make(chan map[string]any, recommendedProducts.ItemCount)
+	failedCh := make(chan string, recommendedProducts.ItemCount)
 
 	params := map[string]string{
 		"q":             "",
@@ -43,7 +44,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 				reqCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 				defer cancel()
 
-				errCh := make(chan error, 1)
+				failCh := make(chan string, 1)
 				resCh := make(chan map[string]any, 1)
 
 				go func() {
@@ -52,7 +53,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 					results, err := search.GetJSON()
 
 					if err != nil {
-						errCh <- fmt.Errorf("serpAPI search for %s failed: %w", pn, err)
+						failCh <- pn
 					} else {
 						resCh <- map[string]any{pn: results}
 					}
@@ -60,9 +61,14 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 
 				select {
 				case <-reqCtx.Done():
-					return fmt.Errorf("scraper agent for %s has timed out", pn)
-				case err := <-errCh:
-					return fmt.Errorf("%w", err)
+					failCh <- pn
+					logger.Log(logger.LogTypeAgentDebug, logger.LevelDebug, fmt.Sprintf("Scraper for %s timed out", pn), "request_id", requestId)
+					return nil
+				case fail := <-failCh:
+					//todo add a retry so can attempt to correct!
+					logger.Log(logger.LogTypeAgentDebug, logger.LevelDebug, fmt.Sprintf("Scraper for %s failed", pn), "request_id", requestId)
+					failCh <- fail
+					return nil
 				case res := <-resCh:
 					ch <- res
 					return nil
@@ -75,9 +81,13 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 		return scraperResponse, fmt.Errorf("%w", err)
 	}
 	close(ch)
+	close(failedCh)
 
 	for productData := range ch {
 		scraperResponse.ProductsScraped = append(scraperResponse.ProductsScraped, productData)
+	}
+	for failedProducts := range failedCh {
+		scraperResponse.FailedProducts = append(scraperResponse.FailedProducts, failedProducts)
 	}
 
 	return scraperResponse, nil
