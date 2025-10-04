@@ -21,7 +21,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 	defer cancel()
 
 	eg, ctx := errgroup.WithContext(ctx)
-	ch := make(chan map[string]any, recommendedProducts.ItemCount)
+	ch := make(chan map[string]map[string]any, recommendedProducts.ItemCount)
 	failedCh := make(chan string, recommendedProducts.ItemCount)
 
 	params := map[string]string{
@@ -45,7 +45,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 				defer cancel()
 
 				failCh := make(chan string, 1)
-				resCh := make(chan map[string]any, 1)
+				resCh := make(chan map[string]map[string]any, 1)
 
 				go func() {
 
@@ -55,7 +55,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 					if err != nil {
 						failCh <- pn
 					} else {
-						resCh <- map[string]any{pn: results}
+						resCh <- map[string]map[string]any{pn: results}
 					}
 				}()
 

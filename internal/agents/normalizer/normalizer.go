@@ -8,5 +8,16 @@ import (
 func NormalizeProducts(loadedData models.ScraperResponse, includedFields []string, requestId string) (models.NormalizerResponse, error) {
 	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Normalizer agent started", "request_id", requestId)
 	var normalizedRecommendations models.NormalizerResponse
+
+	normalizedRecommendationsMap := make(map[string]any)
+
+	for _, productMap := range loadedData.ProductsScraped {
+		for productName, scrapedData := range productMap {
+			for _, fieldName := range includedFields {
+				normalizedRecommendationsMap[productName] = scrapedData[fieldName]
+			}
+		}
+	}
+
 	return normalizedRecommendations, nil
 }

@@ -1,6 +1,8 @@
 package orchestrator
 
 import (
+	"fmt"
+
 	"github.com/trevtemba/richrecommend/internal/agents/normalizer"
 	"github.com/trevtemba/richrecommend/internal/agents/recommendation"
 	"github.com/trevtemba/richrecommend/internal/agents/scraper"
@@ -59,8 +61,9 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 	// 		"image": p.Image,
 	// 	})
 	// }s
+	fmt.Println(normalized)
 
-	return normalized, nil
+	return loadedProducts, nil
 }
 
 // func RunBasePipelineWithParams(params models.OrchestratorParams, requestId string) (any, error) {
