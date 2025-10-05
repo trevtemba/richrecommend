@@ -13,11 +13,14 @@ func NormalizeProducts(loadedData models.ScraperResponse, includedFields []strin
 
 	for _, productMap := range loadedData.ProductsScraped {
 		for productName, scrapedData := range productMap {
-			for _, fieldName := range includedFields {
-				normalizedRecommendationsMap[productName] = scrapedData[fieldName]
-			}
+			productData := scrapedData["product_result"]
+
+			normalizedRecommendationsMap[productName] = productData
+			// for _, fieldName := range includedFields {
+			// 	normalizedRecommendationsMap[productName] = productData[fieldName]
+			// }
 		}
 	}
-
+	normalizedRecommendations.Recommendations = normalizedRecommendationsMap
 	return normalizedRecommendations, nil
 }
