@@ -13,13 +13,13 @@ __pycache__/
 .idea/
 
 # --- Python Virtual Environment ---
-ai_agents/rr_agents/Lib/
-ai_agents/rr_agents/Scripts/
-ai_agents/rr_agents/include/
-ai_agents/rr_agents/bin/
-ai_agents/rr_agents/pyvenv.cfg
-ai_agents/rr_agents/*.egg-info/
-ai_agents/rr_agents/__pycache__/
+ai_agents/venv/Lib/
+ai_agents/venv/Scripts/
+ai_agents/venv/include/
+ai_agents/venv/bin/
+ai_agents/venv/pyvenv.cfg
+ai_agents/venv/*.egg-info/
+ai_agents/venv/__pycache__/
 
 # --- Python Cache & Build ---
 *.egg-info/
