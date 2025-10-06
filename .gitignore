@@ -1,0 +1,37 @@
+# --- General ---
+.DS_Store
+*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+.env
+.venv
+.envrc
+.vscode/
+.idea/
+
+# --- Python Virtual Environment ---
+ai_agents/rr_agents/Lib/
+ai_agents/rr_agents/Scripts/
+ai_agents/rr_agents/include/
+ai_agents/rr_agents/bin/
+ai_agents/rr_agents/pyvenv.cfg
+ai_agents/rr_agents/*.egg-info/
+ai_agents/rr_agents/__pycache__/
+
+# --- Python Cache & Build ---
+*.egg-info/
+*.pytest_cache/
+build/
+dist/
+
+# --- Go ---
+/restapi/bin/
+/restapi/pkg/
+/restapi/vendor/
+*.exe
+*.test
+*.out
+coverage.txt
