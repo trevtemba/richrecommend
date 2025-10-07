@@ -2,6 +2,8 @@ package ai
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	pb "github.com/trevtemba/richrecommend/agent/v1" // path to generated Go stubs
@@ -14,7 +16,8 @@ type Client struct {
 }
 
 func NewClient(addr string) (*Client, error) {
-	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
+	var opts []grpc.DialOption
+	conn, err := grpc.NewClient(addr, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -24,12 +27,16 @@ func NewClient(addr string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetRecommendation(userQuery string) ([]string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+func (c *Client) GetProductData(userQuery map[string]any) ([]*pb.ParsedProduct, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 
-	resp, err := c.client.GetRecommendation(ctx, &pb.RecommendationRequest{
-		UserQuery: userQuery,
+	productDataJson, err := json.Marshal(userQuery)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal product query: %w", err)
+	}
+	resp, err := c.client.ParseProducts(ctx, &pb.ProductRequest{
+		JsonInput: string(productDataJson),
 	})
 	if err != nil {
 		return nil, err

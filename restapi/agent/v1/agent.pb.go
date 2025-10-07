@@ -7,11 +7,12 @@
 package v1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -40,7 +41,7 @@ func (x *ProductRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProductRequest) ProtoMessage() {}
+func (*ProductRequest) ProtoMessage()
 
 func (x *ProductRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_agent_v1_agent_proto_msgTypes[0]
