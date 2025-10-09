@@ -2,8 +2,6 @@ package orchestrator
 
 import (
 	"github.com/trevtemba/richrecommend/internal/agents/normalizer"
-	"github.com/trevtemba/richrecommend/internal/agents/recommendation"
-	"github.com/trevtemba/richrecommend/internal/agents/scraper"
 	"github.com/trevtemba/richrecommend/internal/logger"
 	"github.com/trevtemba/richrecommend/internal/models"
 )
@@ -11,33 +9,33 @@ import (
 func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requestId string) (any, error) {
 	// Step 1: Recommendation Agent
 
-	var recommendationParams models.RecommendationParams
+	// var recommendationParams models.RecommendationParams
 
-	recommendationParams.Provider = params.Provider
-	recommendationParams.Model = params.Model
-	recommendationParams.SystemPrompt = params.SystemPrompt
-	recommendationParams.UserPrompt = params.UserPrompt
-	recommendationParams.Categories = params.Categories
-	recommendationParams.RecommendationsPerCategory = params.RecommendationsPerCategory
-	recommendationParams.ContextSchema = params.ContextSchema
+	// recommendationParams.Provider = params.Provider
+	// recommendationParams.Model = params.Model
+	// recommendationParams.SystemPrompt = params.SystemPrompt
+	// recommendationParams.UserPrompt = params.UserPrompt
+	// recommendationParams.Categories = params.Categories
+	// recommendationParams.RecommendationsPerCategory = params.RecommendationsPerCategory
+	// recommendationParams.ContextSchema = params.ContextSchema
 
-	recommendedProducts, err := recommendation.GenerateWithAdvParams(recommendationParams, key, requestId)
-	if err != nil {
-		logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Agent aborted due to error", "request_id", requestId)
-		return nil, err
-	}
+	// recommendedProducts, err := recommendation.GenerateWithAdvParams(recommendationParams, key, requestId)
+	// if err != nil {
+	// 	logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Agent aborted due to error", "request_id", requestId)
+	// 	return nil, err
+	// }
 
-	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Recommendation agent finished", "request_id", requestId)
+	// logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Recommendation agent finished", "request_id", requestId)
 
-	// Step 2: Scraper Agents
-	loadedProducts, err := scraper.ScrapeProducts(recommendedProducts, requestId)
-	if err != nil {
-		logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Scraper agent aborted", "request_id", requestId)
-		return nil, err
-	}
+	// // Step 2: Scraper Agents
+	// loadedProducts, err := scraper.ScrapeProducts(recommendedProducts, requestId)
+	// if err != nil {
+	// 	logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Scraper agent aborted", "request_id", requestId)
+	// 	return nil, err
+	// }
 
-	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent finished", "request_id", requestId)
-
+	// logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent finished", "request_id", requestId)
+	var loadedProducts models.ScraperResponse
 	// Step 3: Normalizer Agent
 	normalized, err := normalizer.NormalizeProducts(loadedProducts, params.Include, requestId)
 	if err != nil {
