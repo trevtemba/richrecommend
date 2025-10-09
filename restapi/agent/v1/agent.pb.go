@@ -41,7 +41,7 @@ func (x *ProductRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ProductRequest) ProtoMessage()
+func (*ProductRequest) ProtoMessage() {}
 
 func (x *ProductRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_agent_v1_agent_proto_msgTypes[0]
