@@ -21,7 +21,7 @@ func NormalizeProducts(loadedData models.ScraperResponse, includedFields []strin
 	if err != nil {
 		return normalizerResponse, err
 	}
-	_, err = parserAgentClient.GetProductData(map[string]any{"test": "hello"})
+	resp, err := parserAgentClient.GetProductData(map[string]any{"test": "hello"})
 	if err != nil {
 		return normalizerResponse, err
 	}
@@ -79,5 +79,29 @@ func NormalizeProducts(loadedData models.ScraperResponse, includedFields []strin
 	// for failedProducts := range failedCh {
 	// 	normalizerResponse.FailedProducts = append(normalizerResponse.FailedProducts, failedProducts)
 	// }
+
+	parserResponses := make([]map[string]any, len(loadedData.ProductsScraped))
+
+	for _, parsedProduct := range resp {
+		var retailerSlice []map[string]any
+		recMap := map[string]any{
+			"name":        parsedProduct.Name,
+			"description": parsedProduct.Description,
+			"thumbnail":   parsedProduct.Thumbnail,
+			"indredients": parsedProduct.Ingredients,
+		}
+		for _, retailer := range parsedProduct.Retailers {
+			retailerSlice = append(retailerSlice, map[string]any{
+				"link":     retailer.Link,
+				"rating":   retailer.Rating,
+				"price":    retailer.Price,
+				"in_stock": retailer.InStock,
+			})
+		}
+		recMap["retailers"] = retailerSlice
+		parserResponses = append(parserResponses, recMap)
+	}
+
+	normalizerResponse.Recommendations = parserResponses
 	return normalizerResponse, nil
 }
