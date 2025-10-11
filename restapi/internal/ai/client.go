@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/trevtemba/richrecommend/agent/v1" // path to generated Go stubs
+	"github.com/trevtemba/richrecommend/internal/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
@@ -30,7 +31,7 @@ func NewClient(addr string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetProductData(userQuery map[string]any) ([]*pb.ParsedProduct, error) {
+func (c *Client) GetProductData(userQuery map[string]any) ([]models.ProductData, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 
@@ -52,5 +53,27 @@ func (c *Client) GetProductData(userQuery map[string]any) ([]*pb.ParsedProduct, 
 		return nil, err
 	}
 	log.Printf("RPC success, products received: %d", len(resp.Products))
-	return resp.Products, nil
+	var parserResponses []models.ProductData
+	for _, parsedProduct := range resp.Products {
+		var retailerSlice []models.Retailer
+
+		var productData models.ProductData
+		productData.Name = parsedProduct.Name
+		productData.Description = parsedProduct.Description
+		productData.Thumbnail = parsedProduct.Thumbnail
+		productData.Ingredients = parsedProduct.Ingredients
+
+		for _, retailer := range parsedProduct.Retailers {
+			retailerSlice = append(retailerSlice, models.Retailer{
+				Name:    retailer.Name,
+				Link:    retailer.Link,
+				Rating:  retailer.Rating,
+				Price:   retailer.Price,
+				InStock: retailer.InStock,
+			})
+		}
+		productData.Retailers = retailerSlice
+		parserResponses = append(parserResponses, productData)
+	}
+	return parserResponses, nil
 }
