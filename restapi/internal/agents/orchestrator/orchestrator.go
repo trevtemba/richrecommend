@@ -57,7 +57,7 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 	// 		"link":  p.Link,
 	// 		"image": p.Image,
 	// 	})
-	// }s
+	// }
 
 	return loadedProducts, nil
 }

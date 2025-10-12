@@ -10,7 +10,7 @@ class ParserSchema__RetailersItem(BaseModel):
   in_stock: bool
 
 
-class ParserSchema__ProductsItem(BaseModel):
+class ParserSchema__ProductData(BaseModel):
   name: str
   description: str
   thumbnail: str
@@ -19,13 +19,13 @@ class ParserSchema__ProductsItem(BaseModel):
 
 
 class ParserSchema(BaseModel):
-  products: list[ParserSchema__ProductsItem]
+  productData: ParserSchema__ProductData
 
 
 parser = Agent(
   name="parser",
   instructions="""You are a product parsing assistant.
-You will be given a list of scraped product data containing unstructured text or mixed attributes.
+You will be given a product with product data containing unstructured text or mixed attributes.
 Your task is to:
 
 Extract and return only the fields defined in the JSON schema provided below.
@@ -34,13 +34,18 @@ Do not include any additional commentary, text, or explanation — only output v
 
 If a field cannot be determined, set its value to null or an empty list ([]) as appropriate.
 
+If \"buying_options\" contains \"In stock\" then set the in_stock bool in the response schema to true, otherwise, make it false.
+
+Only include retailers from the following list: [\"Target\", \"Walmart\", \"Amazon\", \"Ulta\", \"Sephora\"], anything else should be ignored.
+
 Ensure that all field names exactly match the schema keys.""",
-  model="gpt-5-mini",
+  model="gpt-5-mini-2025-08-07",
   output_type=ParserSchema,
   model_settings=ModelSettings(
     store=True,
     reasoning=Reasoning(
-      effort="low"
+      effort="low",
+      summary="auto"
     )
   )
 )
@@ -52,6 +57,9 @@ class WorkflowInput(BaseModel):
 
 # Main code entrypoint
 async def run_workflow(workflow_input: WorkflowInput):
+  state = {
+
+  }
   workflow = workflow_input.model_dump()
   conversation_history: list[TResponseInputItem] = [
     {
