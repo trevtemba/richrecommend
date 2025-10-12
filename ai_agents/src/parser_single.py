@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from agents import Agent, ModelSettings, TResponseInputItem, Runner, RunConfig
 from openai.types.shared.reasoning import Reasoning
 
-class ParserSchema__RetailersItem(BaseModel):
+class SingleParserSchema__RetailersItem(BaseModel):
   name: str
   link: str
   rating: float
@@ -10,20 +10,20 @@ class ParserSchema__RetailersItem(BaseModel):
   in_stock: bool
 
 
-class ParserSchema__ProductData(BaseModel):
+class SingleParserSchema__ProductData(BaseModel):
   name: str
   description: str
   thumbnail: str
   ingredients: list[str]
-  retailers: list[ParserSchema__RetailersItem]
+  retailers: list[SingleParserSchema__RetailersItem]
 
 
-class ParserSchema(BaseModel):
-  productData: ParserSchema__ProductData
+class SingleParserSchema(BaseModel):
+  productData: SingleParserSchema__ProductData
 
 
-parser = Agent(
-  name="parser",
+single_parser = Agent(
+  name="Single Parser",
   instructions="""You are a product parsing assistant.
 You will be given a product with product data containing unstructured text or mixed attributes.
 Your task is to:
@@ -40,7 +40,7 @@ Only include retailers from the following list: [\"Target\", \"Walmart\", \"Amaz
 
 Ensure that all field names exactly match the schema keys.""",
   model="gpt-5-mini-2025-08-07",
-  output_type=ParserSchema,
+  output_type=SingleParserSchema,
   model_settings=ModelSettings(
     store=True,
     reasoning=Reasoning(
@@ -72,8 +72,8 @@ async def run_workflow(workflow_input: WorkflowInput):
       ]
     }
   ]
-  parser_result_temp = await Runner.run(
-    parser,
+  single_parser_result_temp = await Runner.run(
+    single_parser,
     input=[
       *conversation_history
     ],
@@ -83,9 +83,9 @@ async def run_workflow(workflow_input: WorkflowInput):
     })
   )
 
-  conversation_history.extend([item.to_input_item() for item in parser_result_temp.new_items])
+  conversation_history.extend([item.to_input_item() for item in single_parser_result_temp.new_items])
 
-  parser_result = {
-    "output_text": parser_result_temp.final_output.json(),
-    "output_parsed": parser_result_temp.final_output.model_dump()
+  single_parser_result = {
+    "output_text": single_parser_result_temp.final_output.json(),
+    "output_parsed": single_parser_result_temp.final_output.model_dump()
   }
