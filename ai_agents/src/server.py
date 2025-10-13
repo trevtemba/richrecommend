@@ -1,25 +1,27 @@
 import grpc
-import parser
+import parser.parser_single as parser_single
+import parser.parser_batch as parser_batch
 import json
 import asyncio
 from concurrent import futures
+from grpc import aio
 from agent.v1 import agent_pb2, agent_pb2_grpc 
 
 class ProductAgentServicer(agent_pb2_grpc.ProductAgentServicer):
     async def ParseProducts(self, request, context):
         try:
             print(f"Received request: {request.json_input}")
-            # Parse input JSON
-            data = json.loads(request.json_input)
-            text_input = data.get("text") or json.dumps(data)  # fallback if raw text not present
+            # # Parse input JSON
+            # data = json.loads(request.json_input)
+            # text_input = data.get("text") or json.dumps(data)  # fallback if raw text not present
 
             # Run the parsing agent
-            workflow_input = parser.WorkflowInput(input_as_text=text_input)
-            parser_output = await parser.run_workflow(workflow_input)
+            workflow_input = parser_batch.WorkflowInput(input_as_text=request.json_input)
+            parser_output = await parser_batch.run_workflow(workflow_input)
 
+            print(f"OUTPUT FROM PARSER: {parser_output}")
             # Safely extract parsed products
-            parsed = parser_output["output_parsed"]
-            products = parsed.get("products", [])
+            products = parser_output.get("products", [])
 
             grpc_products = []
 
@@ -34,9 +36,9 @@ class ProductAgentServicer(agent_pb2_grpc.ProductAgentServicer):
                         agent_pb2.Retailer(
                             name=r.get("name", ""),
                             link=r.get("link", ""),
-                            rating=r.get("rating", 0.0),
-                            price=r.get("price", 0.0),
-                            in_stock=r.get("in_stock", False)
+                            rating=float(r.get("rating", 0.0)),
+                            price=str(r.get("price", 0.0)),
+                            in_stock=bool(r.get("in_stock", False))
                         )
                     )
 
@@ -49,52 +51,18 @@ class ProductAgentServicer(agent_pb2_grpc.ProductAgentServicer):
                         retailers=retailers
                     )
                 )
+            print("Product response sent!")
             return agent_pb2.ProductResponse(products=grpc_products)
         except Exception as e:
             await context.abort(grpc.StatusCode.INTERNAL, f"Failed to parse products: {e}")
 
-        # return agent_pb2.ProductResponse(
-        #     products=[
-        #         agent_pb2.ParsedProduct(
-        #             name="SheaMoisture Curl Enhancing Smoothie",
-        #             description="Moisturizing styling cream for curly hair",
-        #             thumbnail="https://example.com/shea.jpg",
-        #             ingredients=["Shea Butter", "Coconut Oil"],
-        #             retailers=[
-        #                 agent_pb2.Retailer(
-        #                     name="Target",
-        #                     link="https://target.com/product123",
-        #                     rating=4.7,
-        #                     price="$9.99",
-        #                     in_stock=True
-        #                 )
-        #             ]
-        #         ),
-        #         agent_pb2.ParsedProduct(
-        #             name="Cantu Leave-In Conditioner",
-        #             description="Repair cream for natural hair",
-        #             thumbnail="https://example.com/cantu.jpg",
-        #             ingredients=["Shea Butter", "Jojoba Oil"],
-        #             retailers=[
-        #                 agent_pb2.Retailer(
-        #                     name="Walmart",
-        #                     link="https://walmart.com/product456",
-        #                     rating=4.6,
-        #                     price="$5.49",
-        #                     in_stock=True
-        #                 )
-        #             ]
-        #         )
-        #     ]
-        # )
-
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+async def serve():
+    server = aio.server()
     agent_pb2_grpc.add_ProductAgentServicer_to_server(ProductAgentServicer(), server)
     server.add_insecure_port('[::]:50051')  # gRPC port
     print("Python gRPC server running on port 50051...")
-    server.start()
-    server.wait_for_termination()
+    await server.start()
+    await server.wait_for_termination()
 
 if __name__ == "__main__":
-    serve()
+    asyncio.run(serve())

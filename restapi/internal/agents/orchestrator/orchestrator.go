@@ -1,6 +1,7 @@
 package orchestrator
 
 import (
+	"github.com/trevtemba/richrecommend/internal/agents/normalizer"
 	"github.com/trevtemba/richrecommend/internal/agents/recommendation"
 	"github.com/trevtemba/richrecommend/internal/agents/scraper"
 	"github.com/trevtemba/richrecommend/internal/logger"
@@ -35,15 +36,14 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 		return nil, err
 	}
 
-	// // logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent finished", "request_id", requestId)
-	// var loadedProducts models.ScraperResponse
-	// // Step 3: Normalizer Agent
-	// normalized, err := normalizer.NormalizeProducts(loadedProducts, params.Include, requestId)
-	// if err != nil {
-	// 	logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Normalizer agent aborted", "request_id", requestId)
-	// 	return nil, err
-	// }
-	// logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Normalizer agent finished", "request_id", requestId)
+	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Scraper agent finished", "request_id", requestId)
+	// Step 3: Normalizer Agent
+	normalized, err := normalizer.NormalizeProducts(loadedProducts, params.Include, requestId)
+	if err != nil {
+		logger.Log(logger.LogTypeAgentAbort, logger.LevelError, "Normalizer agent aborted", "request_id", requestId)
+		return nil, err
+	}
+	logger.Log(logger.LogTypeAgentFinish, logger.LevelInfo, "Normalizer agent finished", "request_id", requestId)
 
 	// // Step 4: Transform to JSON-like structure based on categories
 	// result := make(map[string][]map[string]any)
@@ -59,7 +59,7 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 	// 	})
 	// }
 
-	return loadedProducts, nil
+	return normalized, nil
 }
 
 // func RunBasePipelineWithParams(params models.OrchestratorParams, requestId string) (any, error) {

@@ -31,11 +31,11 @@ func NewClient(addr string) (*Client, error) {
 	}, nil
 }
 
-func (c *Client) GetProductData(userQuery map[string]any) ([]models.ProductData, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+func (c *Client) GetProductData(normalizerCtx context.Context, userQueryBatch []map[string]map[string]any) ([]models.ProductData, error) {
+	ctx, cancel := context.WithTimeout(normalizerCtx, time.Second*120)
 	defer cancel()
 
-	productDataJson, err := json.Marshal(userQuery)
+	productDataJson, err := json.Marshal(userQueryBatch)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal product query: %w", err)
 	}

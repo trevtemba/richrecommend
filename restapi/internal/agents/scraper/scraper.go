@@ -52,6 +52,10 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 
 					search := g.NewGoogleSearch(localParams, os.Getenv("SERP_API_KEY"))
 					results, err := search.GetJSON()
+					if err != nil {
+						log.Println("SerpAPI had an internal error")
+						failCh <- pn
+					}
 					var productData any
 
 					// known product info fields on serpapi
@@ -75,6 +79,9 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 					if err != nil {
 						failCh <- pn
 					} else {
+						delete(productResult, "thumbnails")
+						delete(productResult, "title")
+						delete(productResult, "typical_price")
 						resCh <- map[string]map[string]any{pn: productResult}
 					}
 				}()

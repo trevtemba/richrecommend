@@ -25,21 +25,21 @@ class BatchParserSchema(BaseModel):
 batch_parser = Agent(
   name="Batch Parser",
   instructions="""You are a product parsing assistant.
-You will be a list of products with product data containing unstructured text or mixed attributes.
+You will be given a list of products with product data containing unstructured text or mixed attributes.
 Your task is to:
 
-Extract and return only the fields defined in the JSON schema provided below.
+1. Extract and return only the fields defined in the JSON schema provided below.
 
-Do not include any additional commentary, text, or explanation — only output valid JSON.
+2. Do not include any additional commentary, text, or explanation — only output valid JSON.
 
-If a field cannot be determined, set its value to null or an empty list ([]) as appropriate.
+3. If a field cannot be determined, set its value to null, a bool to false, or an empty list ([]) as appropriate.
 
-If \"buying_options\" contains \"In stock\" then set the in_stock bool in the response schema to true, otherwise, make it false.
+4. If \"buying_options\" within the pricing field contains \"In stock\" in its value, then set the in_stock bool in the retailer object in the response schema to true, otherwise, make it false.
 
-Only include retailers from the following list: [\"Target\", \"Walmart\", \"Amazon\", \"Ulta\", \"Sephora\"], anything else should be ignored.
+5. Only include retailers from the following list: [\"Target\", \"Walmart\", \"Amazon\", \"Ulta\", \"Sephora\"], anything else should be ignored.
 
-Ensure that all field names exactly match the schema keys.""",
-  model="gpt-5",
+6. Ensure that all field names exactly match the schema keys, and that every field in the response schema has a value (use default if it's not populated)""",
+  model="gpt-5-mini",
   output_type=BatchParserSchema,
   model_settings=ModelSettings(
     store=True,
@@ -85,3 +85,4 @@ async def run_workflow(workflow_input: WorkflowInput):
     "output_text": batch_parser_result_temp.final_output.json(),
     "output_parsed": batch_parser_result_temp.final_output.model_dump()
   }
+  return batch_parser_result["output_parsed"]
