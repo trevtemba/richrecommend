@@ -3,6 +3,7 @@ package scraper
 import (
 	"context"
 	"fmt"
+	"log"
 	"maps"
 	"os"
 	"time"
@@ -21,7 +22,7 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 	defer cancel()
 
 	eg, ctx := errgroup.WithContext(ctx)
-	ch := make(chan map[string]any, recommendedProducts.ItemCount)
+	ch := make(chan map[string]map[string]any, recommendedProducts.ItemCount)
 	failedCh := make(chan string, recommendedProducts.ItemCount)
 
 	params := map[string]string{
@@ -45,29 +46,55 @@ func ScrapeProducts(recommendedProducts models.RecommendationResponse, requestId
 				defer cancel()
 
 				failCh := make(chan string, 1)
-				resCh := make(chan map[string]any, 1)
+				resCh := make(chan map[string]map[string]any, 1)
 
 				go func() {
 
 					search := g.NewGoogleSearch(localParams, os.Getenv("SERP_API_KEY"))
 					results, err := search.GetJSON()
+					if err != nil {
+						log.Println("SerpAPI had an internal error")
+						failCh <- pn
+					}
+					var productData any
 
+					// known product info fields on serpapi
+					for _, key := range []string{"product_result", "immersive_products", "shopping_results"} {
+						if val, ok := results[key]; ok {
+							productData = val
+							break
+						}
+					}
+
+					if productData == nil {
+						log.Println("No product-related data found in SERP results")
+						return
+					}
+
+					productResult, ok := productData.(map[string]any)
+					if !ok {
+						log.Println("product data is not in expected format")
+						return
+					}
 					if err != nil {
 						failCh <- pn
 					} else {
-						resCh <- map[string]any{pn: results}
+						delete(productResult, "thumbnails")
+						delete(productResult, "title")
+						delete(productResult, "typical_price")
+						resCh <- map[string]map[string]any{pn: productResult}
 					}
 				}()
 
 				select {
 				case <-reqCtx.Done():
-					failCh <- pn
+					failedCh <- pn
 					logger.Log(logger.LogTypeAgentDebug, logger.LevelDebug, fmt.Sprintf("Scraper for %s timed out", pn), "request_id", requestId)
 					return nil
 				case fail := <-failCh:
 					//todo add a retry so can attempt to correct!
+					failedCh <- fail
 					logger.Log(logger.LogTypeAgentDebug, logger.LevelDebug, fmt.Sprintf("Scraper for %s failed", pn), "request_id", requestId)
-					failCh <- fail
 					return nil
 				case res := <-resCh:
 					ch <- res
