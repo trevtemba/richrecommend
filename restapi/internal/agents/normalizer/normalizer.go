@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/trevtemba/richrecommend/internal/ai"
+	"github.com/trevtemba/richrecommend/internal/helpers/normalization"
 	"github.com/trevtemba/richrecommend/internal/logger"
 	"github.com/trevtemba/richrecommend/internal/models"
 	"golang.org/x/sync/errgroup"
@@ -76,7 +77,6 @@ func NormalizeProducts(loadedData models.ScraperResponse, includedFields []strin
 		}
 	}
 
-	// Temporary! Just going to convert this to map[string]any so I can debug parser agent before filtering fields.
 	var normalizedRecs []map[string]map[string]any
 	for _, response := range parserResponses {
 		var productName string
@@ -86,15 +86,17 @@ func NormalizeProducts(loadedData models.ScraperResponse, includedFields []strin
 			productDataMap = value
 			break
 		}
+		fieldMap := make(map[string]any)
+		for _, field := range includedFields {
+			if normalization.IsValidField(field) {
+				fieldMap[field] = normalization.GetField(productDataMap, field)
+			}
+		}
 		normalizedRecs = append(normalizedRecs, map[string]map[string]any{
-			productName: {
-				"description": productDataMap.Description,
-				"thumbnail":   productDataMap.Thumbnail,
-				"ingredients": productDataMap.Ingredients,
-				"retailers":   productDataMap.Retailers,
-			},
+			productName: fieldMap,
 		})
 	}
+
 	normalizerResponse.Recommendations = normalizedRecs
 	normalizerResponse.FailedProducts = loadedData.FailedProducts
 	return normalizerResponse, nil
