@@ -7,7 +7,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/trevtemba/richrecommend/agent/v1" // path to generated Go stubs
+	pb "github.com/trevtemba/richrecommend/agent/v2" // path to generated Go stubs
 	"github.com/trevtemba/richrecommend/internal/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

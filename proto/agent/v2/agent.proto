@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package agent.v1;
+package agent.v2;
 
-option go_package = "agent/v1";
+option go_package = "agent/v2";
 
 // defining how Go REST API will communicate with Python AI agent over gRPC.
 // takes in JSON blob (ProductRequest) and then returns structured ParsedProduct objects.
@@ -34,6 +34,6 @@ message Retailer {
     string name = 1;
     string link = 2;
     double rating = 3;
-    string price = 4;
+    double price = 4;
     bool in_stock = 5;
 }
