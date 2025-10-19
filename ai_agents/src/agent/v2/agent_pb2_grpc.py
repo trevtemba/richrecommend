@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from agent.v1 import agent_pb2 as agent_dot_v1_dot_agent__pb2
+from agent.v2 import agent_pb2 as agent__pb2
 
 GRPC_GENERATED_VERSION = '1.75.1'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in agent/v1/agent_pb2_grpc.py depends on'
+        + f' but the generated code in agent_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -37,9 +37,9 @@ class ProductAgentStub(object):
             channel: A grpc.Channel.
         """
         self.ParseProducts = channel.unary_unary(
-                '/agent.v1.ProductAgent/ParseProducts',
-                request_serializer=agent_dot_v1_dot_agent__pb2.ProductRequest.SerializeToString,
-                response_deserializer=agent_dot_v1_dot_agent__pb2.ProductResponse.FromString,
+                '/agent.v2.ProductAgent/ParseProducts',
+                request_serializer=agent__pb2.ProductRequest.SerializeToString,
+                response_deserializer=agent__pb2.ProductResponse.FromString,
                 _registered_method=True)
 
 
@@ -59,14 +59,14 @@ def add_ProductAgentServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'ParseProducts': grpc.unary_unary_rpc_method_handler(
                     servicer.ParseProducts,
-                    request_deserializer=agent_dot_v1_dot_agent__pb2.ProductRequest.FromString,
-                    response_serializer=agent_dot_v1_dot_agent__pb2.ProductResponse.SerializeToString,
+                    request_deserializer=agent__pb2.ProductRequest.FromString,
+                    response_serializer=agent__pb2.ProductResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'agent.v1.ProductAgent', rpc_method_handlers)
+            'agent.v2.ProductAgent', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('agent.v1.ProductAgent', rpc_method_handlers)
+    server.add_registered_method_handlers('agent.v2.ProductAgent', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
@@ -89,9 +89,9 @@ class ProductAgent(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/agent.v1.ProductAgent/ParseProducts',
-            agent_dot_v1_dot_agent__pb2.ProductRequest.SerializeToString,
-            agent_dot_v1_dot_agent__pb2.ProductResponse.FromString,
+            '/agent.v2.ProductAgent/ParseProducts',
+            agent__pb2.ProductRequest.SerializeToString,
+            agent__pb2.ProductResponse.FromString,
             options,
             channel_credentials,
             insecure,

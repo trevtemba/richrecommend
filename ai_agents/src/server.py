@@ -5,7 +5,7 @@ import json
 import asyncio
 from concurrent import futures
 from grpc import aio
-from agent.v1 import agent_pb2, agent_pb2_grpc 
+from agent.v2 import agent_pb2, agent_pb2_grpc 
 
 class ProductAgentServicer(agent_pb2_grpc.ProductAgentServicer):
     async def ParseProducts(self, request, context):
@@ -37,7 +37,7 @@ class ProductAgentServicer(agent_pb2_grpc.ProductAgentServicer):
                             name=r.get("name", ""),
                             link=r.get("link", ""),
                             rating=float(r.get("rating", 0.0)),
-                            price=str(r.get("price", 0.0)),
+                            price=r.get("price", 0.0),
                             in_stock=bool(r.get("in_stock", False))
                         )
                     )
