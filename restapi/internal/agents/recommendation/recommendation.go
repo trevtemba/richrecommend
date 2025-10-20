@@ -37,7 +37,6 @@ import (
 // 	chat, err := client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
 // 		Messages: []openai.ChatCompletionMessageParamUnion{
 // 			openai.SystemMessage("params.SystemPrompt"),
-// 			openai.UserMessage(params.UserPrompt),
 // 		},
 // 		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 // 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{JSONSchema: schemaParam},

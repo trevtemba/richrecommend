@@ -16,7 +16,6 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 	recommendationParams.Provider = params.Provider
 	recommendationParams.Model = params.Model
 	recommendationParams.SystemPrompt = params.SystemPrompt
-	recommendationParams.UserPrompt = params.UserPrompt
 	recommendationParams.Categories = params.Categories
 	recommendationParams.RecommendationsPerCategory = params.RecommendationsPerCategory
 	recommendationParams.ContextSchema = params.ContextSchema
@@ -68,7 +67,6 @@ func RunAdvPipelineWithParams(params models.OrchestratorParams, key string, requ
 // 	var recommendationParams models.RecommendationParams
 
 // 	recommendationParams.SystemPrompt = params.SystemPrompt
-// 	recommendationParams.UserPrompt = params.UserPrompt
 // 	recommendationParams.Categories = params.Categories
 // 	recommendationParams.RecommendationsPerCategory = params.RecommendationsPerCategory
 // 	recommendationParams.ContextSchema = params.ContextSchema
