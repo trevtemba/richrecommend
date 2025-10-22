@@ -143,10 +143,10 @@ func TestParseChatResponse(t *testing.T) {
 
 func TestGenerateSystemMessage(t *testing.T) {
 	type testParams struct {
-		systemPrompt      models.SystemPrompt
-		contextSchemaName string
-		categories        []string
-		recsPerCategory   int
+		systemPromptParams models.SystemPromptParams
+		contextSchemaName  string
+		categories         []string
+		recsPerCategory    int
 	}
 	tests := []struct {
 		name   string
@@ -156,7 +156,7 @@ func TestGenerateSystemMessage(t *testing.T) {
 		{
 			name: "basic system prompt with domain",
 			params: testParams{
-				systemPrompt: models.SystemPrompt{
+				systemPromptParams: models.SystemPromptParams{
 					Role:      "professional hair care expert",
 					Clientele: "black clients with type 4 hair",
 					Domain:    "hair care",
@@ -173,7 +173,7 @@ func TestGenerateSystemMessage(t *testing.T) {
 		{
 			name: "system prompt without domain",
 			params: testParams{
-				systemPrompt: models.SystemPrompt{
+				systemPromptParams: models.SystemPromptParams{
 					Role:      "nutrition advisor",
 					Clientele: "athletes",
 					Domain:    "",
@@ -190,7 +190,7 @@ func TestGenerateSystemMessage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GenerateSystemMessage(tt.params.systemPrompt, tt.params.contextSchemaName, tt.params.categories, tt.params.recsPerCategory)
+			got, err := GenerateSystemMessage(tt.params.systemPromptParams, tt.params.contextSchemaName, tt.params.categories, tt.params.recsPerCategory)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

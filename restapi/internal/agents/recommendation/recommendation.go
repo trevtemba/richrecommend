@@ -84,7 +84,7 @@ func GenerateWithAdvParams(params models.RecommendationParams, key string, reque
 	}
 
 	logger.Log(logger.LogTypeAgentWork, logger.LevelDebug, "Generating system message...", "request_id", requestId)
-	sysMsg, err := recHelpers.GenerateSystemMessage(params.SystemPrompt, params.ContextSchema.Name, params.Categories, params.RecommendationsPerCategory)
+	sysMsg, err := recHelpers.GenerateSystemMessage(params.SystemPromptParams, params.ContextSchema.Name, params.Categories, params.RecommendationsPerCategory)
 	if err != nil {
 		return recommendation, fmt.Errorf("could not generate system prompt: %w", err)
 	}

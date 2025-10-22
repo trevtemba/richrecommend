@@ -2,11 +2,11 @@ package models
 
 // Request payload for dynamic recommendations
 type RequestBase struct {
-	SystemPrompt               SystemPrompt  `json:"system_prompt"`
-	Categories                 []string      `json:"categories"`
-	RecommendationsPerCategory int           `json:"recommendations_per_category"`
-	ContextSchema              ContextSchema `json:"context_schema"`
-	Include                    []string      `json:"include"`
+	SystemPromptParams         SystemPromptParams `json:"system_prompt_params"`
+	Categories                 []string           `json:"categories"`
+	RecommendationsPerCategory int                `json:"recommendations_per_category"`
+	ContextSchema              ContextSchema      `json:"context_schema"`
+	Include                    []string           `json:"include"`
 }
 
 // type HairProfile struct {
