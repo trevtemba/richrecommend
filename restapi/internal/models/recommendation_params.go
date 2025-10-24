@@ -1,11 +1,10 @@
 package models
 
 type RecommendationParams struct {
-	Provider                   string        `json:"provider"`
-	Model                      string        `json:"model"`
-	SystemPrompt               SystemPrompt  `json:"system_prompt"`
-	UserPrompt                 string        `json:"user_prompt"`
-	Categories                 []string      `json:"categories"`
-	RecommendationsPerCategory int           `json:"recommendations_per_category"`
-	ContextSchema              ContextSchema `json:"context_schema"`
+	Provider                   string             `json:"provider"`
+	Model                      string             `json:"model"`
+	SystemPromptParams         SystemPromptParams `json:"system_prompt_params"`
+	Categories                 []string           `json:"categories"`
+	RecommendationsPerCategory int                `json:"recommendations_per_category"`
+	ContextSchema              ContextSchema      `json:"context_schema"`
 }

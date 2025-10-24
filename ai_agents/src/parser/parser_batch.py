@@ -20,8 +20,7 @@ Set only_about_parsing=True only for appropriate JSON parsing requests.
 When uncertain, default to False for safety.
 """,
     model_settings=ModelSettings(
-        reasoning=Reasoning(effort="medium", summary="concise"),
-        store=True
+        store=True,
     ),
     output_type=NotAboutJailbreaking,
 )

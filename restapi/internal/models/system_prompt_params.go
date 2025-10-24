@@ -1,6 +1,6 @@
 package models
 
-type SystemPrompt struct {
+type SystemPromptParams struct {
 	Role      string `json:"role"`
 	Clientele string `json:"clientele"`
 	Domain    string `json:"domain"`

@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.32.1
-// source: proto/agent/v1/agent.proto
+// source: proto/agent/v2/agent.proto
 
-package v1
+package v2
 
 import (
 	context "context"
@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductAgent_ParseProducts_FullMethodName = "/agent.v1.ProductAgent/ParseProducts"
+	ProductAgent_ParseProducts_FullMethodName = "/agent.v2.ProductAgent/ParseProducts"
 )
 
 // ProductAgentClient is the client API for ProductAgent service.
@@ -114,7 +114,7 @@ func _ProductAgent_ParseProducts_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProductAgent_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "agent.v1.ProductAgent",
+	ServiceName: "agent.v2.ProductAgent",
 	HandlerType: (*ProductAgentServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -123,5 +123,5 @@ var ProductAgent_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/agent/v1/agent.proto",
+	Metadata: "proto/agent/v2/agent.proto",
 }

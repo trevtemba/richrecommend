@@ -2,17 +2,16 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.32.1
-// source: proto/agent/v1/agent.proto
+// source: proto/agent/v2/agent.proto
 
-package v1
+package v2
 
 import (
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
-
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -32,7 +31,7 @@ type ProductRequest struct {
 
 func (x *ProductRequest) Reset() {
 	*x = ProductRequest{}
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[0]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +43,7 @@ func (x *ProductRequest) String() string {
 func (*ProductRequest) ProtoMessage() {}
 
 func (x *ProductRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[0]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +56,7 @@ func (x *ProductRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductRequest.ProtoReflect.Descriptor instead.
 func (*ProductRequest) Descriptor() ([]byte, []int) {
-	return file_proto_agent_v1_agent_proto_rawDescGZIP(), []int{0}
+	return file_proto_agent_v2_agent_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *ProductRequest) GetJsonInput() string {
@@ -77,7 +76,7 @@ type ProductResponse struct {
 
 func (x *ProductResponse) Reset() {
 	*x = ProductResponse{}
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[1]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -89,7 +88,7 @@ func (x *ProductResponse) String() string {
 func (*ProductResponse) ProtoMessage() {}
 
 func (x *ProductResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[1]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -102,7 +101,7 @@ func (x *ProductResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ProductResponse.ProtoReflect.Descriptor instead.
 func (*ProductResponse) Descriptor() ([]byte, []int) {
-	return file_proto_agent_v1_agent_proto_rawDescGZIP(), []int{1}
+	return file_proto_agent_v2_agent_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *ProductResponse) GetProducts() []*ParsedProduct {
@@ -125,7 +124,7 @@ type ParsedProduct struct {
 
 func (x *ParsedProduct) Reset() {
 	*x = ParsedProduct{}
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[2]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -137,7 +136,7 @@ func (x *ParsedProduct) String() string {
 func (*ParsedProduct) ProtoMessage() {}
 
 func (x *ParsedProduct) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[2]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -150,7 +149,7 @@ func (x *ParsedProduct) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ParsedProduct.ProtoReflect.Descriptor instead.
 func (*ParsedProduct) Descriptor() ([]byte, []int) {
-	return file_proto_agent_v1_agent_proto_rawDescGZIP(), []int{2}
+	return file_proto_agent_v2_agent_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ParsedProduct) GetName() string {
@@ -193,7 +192,7 @@ type Retailer struct {
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Link          string                 `protobuf:"bytes,2,opt,name=link,proto3" json:"link,omitempty"`
 	Rating        float64                `protobuf:"fixed64,3,opt,name=rating,proto3" json:"rating,omitempty"`
-	Price         string                 `protobuf:"bytes,4,opt,name=price,proto3" json:"price,omitempty"`
+	Price         float64                `protobuf:"fixed64,4,opt,name=price,proto3" json:"price,omitempty"`
 	InStock       bool                   `protobuf:"varint,5,opt,name=in_stock,json=inStock,proto3" json:"in_stock,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -201,7 +200,7 @@ type Retailer struct {
 
 func (x *Retailer) Reset() {
 	*x = Retailer{}
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[3]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -213,7 +212,7 @@ func (x *Retailer) String() string {
 func (*Retailer) ProtoMessage() {}
 
 func (x *Retailer) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_agent_v1_agent_proto_msgTypes[3]
+	mi := &file_proto_agent_v2_agent_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -226,7 +225,7 @@ func (x *Retailer) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Retailer.ProtoReflect.Descriptor instead.
 func (*Retailer) Descriptor() ([]byte, []int) {
-	return file_proto_agent_v1_agent_proto_rawDescGZIP(), []int{3}
+	return file_proto_agent_v2_agent_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Retailer) GetName() string {
@@ -250,11 +249,11 @@ func (x *Retailer) GetRating() float64 {
 	return 0
 }
 
-func (x *Retailer) GetPrice() string {
+func (x *Retailer) GetPrice() float64 {
 	if x != nil {
 		return x.Price
 	}
-	return ""
+	return 0
 }
 
 func (x *Retailer) GetInStock() bool {
@@ -264,56 +263,56 @@ func (x *Retailer) GetInStock() bool {
 	return false
 }
 
-var File_proto_agent_v1_agent_proto protoreflect.FileDescriptor
+var File_proto_agent_v2_agent_proto protoreflect.FileDescriptor
 
-const file_proto_agent_v1_agent_proto_rawDesc = "" +
+const file_proto_agent_v2_agent_proto_rawDesc = "" +
 	"\n" +
-	"\x1aproto/agent/v1/agent.proto\x12\bagent.v1\"/\n" +
+	"\x1aproto/agent/v2/agent.proto\x12\bagent.v2\"/\n" +
 	"\x0eProductRequest\x12\x1d\n" +
 	"\n" +
 	"json_input\x18\x01 \x01(\tR\tjsonInput\"F\n" +
 	"\x0fProductResponse\x123\n" +
-	"\bproducts\x18\x01 \x03(\v2\x17.agent.v1.ParsedProductR\bproducts\"\xb7\x01\n" +
+	"\bproducts\x18\x01 \x03(\v2\x17.agent.v2.ParsedProductR\bproducts\"\xb7\x01\n" +
 	"\rParsedProduct\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x1c\n" +
 	"\tthumbnail\x18\x03 \x01(\tR\tthumbnail\x12 \n" +
 	"\vingredients\x18\x04 \x03(\tR\vingredients\x120\n" +
-	"\tretailers\x18\x05 \x03(\v2\x12.agent.v1.RetailerR\tretailers\"{\n" +
+	"\tretailers\x18\x05 \x03(\v2\x12.agent.v2.RetailerR\tretailers\"{\n" +
 	"\bRetailer\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
 	"\x04link\x18\x02 \x01(\tR\x04link\x12\x16\n" +
 	"\x06rating\x18\x03 \x01(\x01R\x06rating\x12\x14\n" +
-	"\x05price\x18\x04 \x01(\tR\x05price\x12\x19\n" +
+	"\x05price\x18\x04 \x01(\x01R\x05price\x12\x19\n" +
 	"\bin_stock\x18\x05 \x01(\bR\ainStock2T\n" +
 	"\fProductAgent\x12D\n" +
-	"\rParseProducts\x12\x18.agent.v1.ProductRequest\x1a\x19.agent.v1.ProductResponseB\n" +
-	"Z\bagent/v1b\x06proto3"
+	"\rParseProducts\x12\x18.agent.v2.ProductRequest\x1a\x19.agent.v2.ProductResponseB\n" +
+	"Z\bagent/v2b\x06proto3"
 
 var (
-	file_proto_agent_v1_agent_proto_rawDescOnce sync.Once
-	file_proto_agent_v1_agent_proto_rawDescData []byte
+	file_proto_agent_v2_agent_proto_rawDescOnce sync.Once
+	file_proto_agent_v2_agent_proto_rawDescData []byte
 )
 
-func file_proto_agent_v1_agent_proto_rawDescGZIP() []byte {
-	file_proto_agent_v1_agent_proto_rawDescOnce.Do(func() {
-		file_proto_agent_v1_agent_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_agent_v1_agent_proto_rawDesc), len(file_proto_agent_v1_agent_proto_rawDesc)))
+func file_proto_agent_v2_agent_proto_rawDescGZIP() []byte {
+	file_proto_agent_v2_agent_proto_rawDescOnce.Do(func() {
+		file_proto_agent_v2_agent_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_proto_agent_v2_agent_proto_rawDesc), len(file_proto_agent_v2_agent_proto_rawDesc)))
 	})
-	return file_proto_agent_v1_agent_proto_rawDescData
+	return file_proto_agent_v2_agent_proto_rawDescData
 }
 
-var file_proto_agent_v1_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_proto_agent_v1_agent_proto_goTypes = []any{
-	(*ProductRequest)(nil),  // 0: agent.v1.ProductRequest
-	(*ProductResponse)(nil), // 1: agent.v1.ProductResponse
-	(*ParsedProduct)(nil),   // 2: agent.v1.ParsedProduct
-	(*Retailer)(nil),        // 3: agent.v1.Retailer
+var file_proto_agent_v2_agent_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_proto_agent_v2_agent_proto_goTypes = []any{
+	(*ProductRequest)(nil),  // 0: agent.v2.ProductRequest
+	(*ProductResponse)(nil), // 1: agent.v2.ProductResponse
+	(*ParsedProduct)(nil),   // 2: agent.v2.ParsedProduct
+	(*Retailer)(nil),        // 3: agent.v2.Retailer
 }
-var file_proto_agent_v1_agent_proto_depIdxs = []int32{
-	2, // 0: agent.v1.ProductResponse.products:type_name -> agent.v1.ParsedProduct
-	3, // 1: agent.v1.ParsedProduct.retailers:type_name -> agent.v1.Retailer
-	0, // 2: agent.v1.ProductAgent.ParseProducts:input_type -> agent.v1.ProductRequest
-	1, // 3: agent.v1.ProductAgent.ParseProducts:output_type -> agent.v1.ProductResponse
+var file_proto_agent_v2_agent_proto_depIdxs = []int32{
+	2, // 0: agent.v2.ProductResponse.products:type_name -> agent.v2.ParsedProduct
+	3, // 1: agent.v2.ParsedProduct.retailers:type_name -> agent.v2.Retailer
+	0, // 2: agent.v2.ProductAgent.ParseProducts:input_type -> agent.v2.ProductRequest
+	1, // 3: agent.v2.ProductAgent.ParseProducts:output_type -> agent.v2.ProductResponse
 	3, // [3:4] is the sub-list for method output_type
 	2, // [2:3] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -321,26 +320,26 @@ var file_proto_agent_v1_agent_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_proto_agent_v1_agent_proto_init() }
-func file_proto_agent_v1_agent_proto_init() {
-	if File_proto_agent_v1_agent_proto != nil {
+func init() { file_proto_agent_v2_agent_proto_init() }
+func file_proto_agent_v2_agent_proto_init() {
+	if File_proto_agent_v2_agent_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_agent_v1_agent_proto_rawDesc), len(file_proto_agent_v1_agent_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_agent_v2_agent_proto_rawDesc), len(file_proto_agent_v2_agent_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_proto_agent_v1_agent_proto_goTypes,
-		DependencyIndexes: file_proto_agent_v1_agent_proto_depIdxs,
-		MessageInfos:      file_proto_agent_v1_agent_proto_msgTypes,
+		GoTypes:           file_proto_agent_v2_agent_proto_goTypes,
+		DependencyIndexes: file_proto_agent_v2_agent_proto_depIdxs,
+		MessageInfos:      file_proto_agent_v2_agent_proto_msgTypes,
 	}.Build()
-	File_proto_agent_v1_agent_proto = out.File
-	file_proto_agent_v1_agent_proto_goTypes = nil
-	file_proto_agent_v1_agent_proto_depIdxs = nil
+	File_proto_agent_v2_agent_proto = out.File
+	file_proto_agent_v2_agent_proto_goTypes = nil
+	file_proto_agent_v2_agent_proto_depIdxs = nil
 }

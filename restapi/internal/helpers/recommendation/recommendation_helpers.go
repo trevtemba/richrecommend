@@ -31,7 +31,7 @@ func GenerateSchema(categories []string) map[string]any {
 	return schema
 }
 
-func GenerateSystemMessage(systemPrompt models.SystemPrompt, contextSchemaName string, categories []string, recsPerCategory int) (string, error) {
+func GenerateSystemMessage(systemPrompt models.SystemPromptParams, contextSchemaName string, categories []string, recsPerCategory int) (string, error) {
 
 	var message strings.Builder
 

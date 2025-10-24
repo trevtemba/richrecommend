@@ -17,7 +17,6 @@ import (
 
 // 	params := models.OrchestratorParams{
 // 		SystemPrompt:               req.SystemPrompt,
-// 		UserPrompt:                 req.UserPrompt,
 // 		Categories:                 req.Categories,
 // 		RecommendationsPerCategory: req.RecommendationsPerCategory,
 // 		ContextSchema:              req.ContextSchema,
