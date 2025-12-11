@@ -3,6 +3,6 @@
 
 RichRecommend is a SaaS platform that delivers intelligent, generalized recommendations for various consumer products.
 
-**Architecture:**
+**HEY RECRUITERS**
 - Front-end (original app): https://github.com/trevtemba/Crown
 - Back-end: [current repository]
